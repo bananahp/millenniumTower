@@ -17,30 +17,57 @@
         ul, ol { color: #e5e5ea; padding-left: 20px; line-height: 1.6; }
         li { margin-bottom: 12px; font-size: 1.05rem; }
         strong { color: #ffffff; }
-        .btn-container { text-align: center; margin: 30px 0; }
-        .btn { display: inline-block; background: #007aff; color: white; text-decoration: none; padding: 16px 30px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,122,255,0.3); }
+        .btn-container { text-align: center; margin: 25px 0; }
+        .btn { display: inline-block; background: #007aff; color: white; text-decoration: none; padding: 16px 30px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; transition: 0.2s; box-shadow: 0 4px 15px rgba(0,122,255,0.3); width: 85%; box-sizing: border-box; text-align: center; }
         .btn:hover { background: #0056b3; }
+        .btn-success { background: #34c759; box-shadow: 0 4px 15px rgba(52,199,89,0.3); }
+        .btn-success:hover { background: #28a745; }
+        
+        /* Tally Embed optimization layout */
+        .tally-container { margin: 15px 0; background: #2c2c2e; border-radius: 14px; padding: 10px; border: 1px solid #3a3a3c; }
+        .tally-iframe { width: 100%; height: 350px; border: none; display: block; }
         .footer { font-size: 0.85rem; color: #636366; text-align: center; margin-top: 40px; line-height: 1.4; }
+
+        /* Dynamic Calendar Engine Custom Styling */
+        .calendar-wrap { display: none; animation: slideDown 0.4s ease-out forwards; margin: 15px 0; }
+        .calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; background: #2c2c2e; padding: 15px; border-radius: 14px; border: 1px solid #3a3a3c; }
+        .calendar-day { background: #1c1c1e; padding: 12px 0; border-radius: 8px; text-align: center; font-weight: bold; font-size: 0.9rem; color: #aeaeb2; }
+        .calendar-day.broken { background: #ff453a; color: white; box-shadow: 0 0 10px rgba(255, 69, 58, 0.4); }
+        .calendar-weekday {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #8e8e93;
+            font-weight: bold;
+            text-align: center;
+            padding-bottom: 5px;
+        }
+        
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
     <div class="card">
         <div class="warning-header">⚠️ MILLENNIUM TOWER LIFT CRISIS: KNOW YOUR RIGHTS ⚠️</div>
-    <h1>STAIRMASTER UNLOCKED</h1>
+        <h1>STAIRMASTER UNLOCKED</h1>
+        
         <div class="days-container">
             <div class="days-label">Days Without a Working Lift</div>
             <div class="days">9</div> 
         </div>
-                <div class="btn-container">
+
+        <div class="btn-container">
             <a href="https://www.salford.gov.uk/housing/housing-advice-and-support/problems-with-your-property/make-a-complaint-about-a-rented-property/" target="_blank" class="btn">Report to Salford Council</a>
         </div>
 
-        <p>Living on a high floor with <strong>BOTH lifts out of action</strong> for two weeks is more than an inconvenience. We are trapped in a high-rise walk-up during a heatwave.</p>
+        <p>Living on a high floor with <strong>BOTH lifts out of action</strong> for two weeks is more than an inconvenience.</p>
         
         <p>Whether you are struggling to carry shopping, moving in / out, or trying to manage kids and prams, this is highly unacceptable.</p>
         
-        <p>🪷 Below are some healthy advice 🧘‍♀️</p>
+        <p>🪷 Below are some healthy reading for you 🧘‍♀️</p>
 
         <h2>1. It is Your Landlord’s Problem (Legally)</h2>
         <p>Your tenancy contract is with your private landlord, not Hadrian Property Management. Legally, your landlord cannot shrug and blame block management. Under <strong>Section 11 of the Landlord and Tenant Act 1985</strong>, your landlord is directly responsible for ensuring you have safe, functioning access to the flat you are paying rent for.</p>
@@ -57,12 +84,30 @@
 
         <h2>📥 WHAT TO DO RIGHT NOW:</h2>
         <ul>
-            <li><strong>Mark the Tracker:</strong> Put an <strong>X</strong> on the community calendar for every day the lifts are broken so we have undeniable proof.</br><img src="IMG_9756.jpeg" alt="Millennium Tower" style="max-width: 100%; border-radius: 12px; margin: 20px 0;"></li>
+            <li>
+                <strong>Mark the Tracker:</strong><br>
+                <div id="trackerInteractionArea">
+                    <div id="formView" class="tally-container">
+                        <iframe src="https://tally.so/embed/81W6xx?hideTitle=1&transparentBackground=1&dynamicHeight=1" class="tally-iframe" title="Resident Impact Poll" data-tally-iframe></iframe>
+                    </div>
+
+<div id="calendarView" class="calendar-wrap">
+    <p style="font-size: 0.95rem; margin-top: 5px; color:#ff9500;">✊ Response saved. Days highlighted in red have confirmed outages:</p>
+    
+    <div id="calendarHeader" style="font-size: 1.2rem; font-weight: bold; color: #ffffff; text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;"></div>
+    
+    <div class="calendar-grid" id="calendarGrid"></div>
+</div>
+                </div>
+            </li>
             <li><strong>Message Your Landlord/Agent:</strong> Tell them the lifts have been dead for two weeks, it is a safety hazard in this heatwave, and demand they put maximum pressure on Hadrian. Ask them for a rent reduction.</li>
             <li><strong>Report to Salford Council:</strong> Click the button at the top of this page to go directly to the Salford Council reporting dashboard to log an official complaint.</li>
         </ul>
 
-        <p style="text-align: center; color: #ff9500; font-weight: bold; margin-bottom: 0;">Hadrian🤡 has been waiting on a quote for almost a week. Let’s make sure every single landlord in this building gets the message.</p>
+        <p style="text-align: center; color: #ff9500; font-weight: bold; margin-bottom: 20px;">Hadrian🤡 has been waiting on a quote for almost a week. Let’s make sure every single landlord in this building gets the message.</p>
+
+        <hr style="border: 0; border-top: 1px solid #3a3a3c; margin: 25px 0;">
+
     </div>
 
     <div class="footer">
@@ -70,5 +115,106 @@
         Rest up, stay hydrated in this heat, and scan this whenever you need to check your rights!</p>
     </div>
 
+    <script async src="https://tally.so/widgets/embed.js"></script>
+
+    <script>
+// 1. Paste your published Google Sheet CSV link here:
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSwIdJeNq7LzG1gYUaBcY1XuyHudzOW-6TK3tL9oWHpNlkAdUaBBeOUQ612RuM7twEkj0mQ-iIB3wjv/pub?gid=0&single=true&output=csv';
+
+const calendarGrid = document.getElementById('calendarGrid');
+const calendarHeader = document.getElementById('calendarHeader');
+const totalDaysTracked = 30; 
+
+// Array for the weekday column headers
+const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+// This function fetches your spreadsheet data and builds the calendar
+async function loadCalendarFromSpreadsheet() {
+    let confirmedBrokenDays = []; 
+
+    try {
+        const response = await fetch(SHEET_CSV_URL);
+        const csvText = await response.text();
+        
+        // Split data into individual rows
+        const rows = csvText.split('\n');
+
+        confirmedBrokenDays = rows.map((row, index) => {
+            // 1. Skip the first row completely (headers like "Submitted at")
+            if (index === 0) return null;
+
+            const cellValue = row.trim();
+            if (!cellValue) return null;
+
+            // Get the text from Column A (split by commas in case it reads the whole row)
+            const firstColumnData = cellValue.split(',')[0].replace(/"/g, '').trim();
+
+            // 2. Check if the cell looks like a date (e.g., 2026-06-29 19:08:17)
+            if (firstColumnData.includes('-') || firstColumnData.includes('/')) {
+                const dateObj = new Date(firstColumnData);
+                // Extract just the day number (1-31) if it's valid
+                return !isNaN(dateObj.getTime()) ? dateObj.getDate() : null;
+            } else {
+                // If it's already a raw number string, parse it directly
+                const parsedNum = parseInt(firstColumnData, 10);
+                return !isNaN(parsedNum) ? parsedNum : null;
+            }
+        }).filter(num => num !== null && !isNaN(num));
+
+    } catch (error) {
+        console.warn("CORS block or sheet missing. Using local test array.");
+        confirmedBrokenDays = [22, 23, 24, 25]; // Your local fallback test
+    }
+
+    // Set the dynamic Month and Year header
+    const now = new Date();
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+    calendarHeader.innerText = `${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+
+    // Clear out any old rendering
+    calendarGrid.innerHTML = ''; 
+
+    // Inject the weekday column headers (Mon, Tue, etc.)
+    weekdays.forEach(dayName => {
+        let weekdayLabel = document.createElement('div');
+        weekdayLabel.classList.add('calendar-weekday');
+        weekdayLabel.innerText = dayName;
+        calendarGrid.appendChild(weekdayLabel);
+    });
+
+    // Build and populate the visual tracking calendar numbers
+    for (let dayNumber = 1; dayNumber <= totalDaysTracked; dayNumber++) {
+        let daySquare = document.createElement('div');
+        daySquare.classList.add('calendar-day');
+        daySquare.innerText = dayNumber;
+        
+        // If this day number matches any days found in your Tally sheet, light it up red!
+        if (confirmedBrokenDays.includes(dayNumber)) {
+            daySquare.classList.add('broken');
+        }
+        
+        calendarGrid.appendChild(daySquare);
+    }
+}
+
+// Initialize the calendar on page load
+loadCalendarFromSpreadsheet();
+
+// 2. Intercept Tally post-message to instantly swap form container to calendar container
+window.addEventListener('message', (tallyMessage) => {
+    try {
+        if (tallyMessage.data && typeof tallyMessage.data === 'string') {
+            const messageData = JSON.parse(tallyMessage.data);
+            
+            if (messageData.event === 'Tally.FormSubmitted') {
+                document.getElementById('formView').style.display = 'none';
+                document.getElementById('calendarView').style.display = 'block';
+            }
+        }
+    } catch (error) {
+        // Safe catch-all to ignore messages sent by other browser apps/extensions
+    }
+});
+    </script>
 </body>
 </html>
