@@ -54,10 +54,10 @@
         <div class="warning-header">⚠️ MILLENNIUM TOWER LIFT CRISIS: KNOW YOUR RIGHTS ⚠️</div>
         <h1>STAIRMASTER UNLOCKED</h1>
         
-<div class="days-container">
-    <div class="days-label">Days Without a Working Lift</div>
-    <div class="days" id="daysCounter">0</div> 
-</div>
+        <div class="days-container">
+            <div class="days-label">Days Without a Working Lift</div>
+            <div class="days">10</div> 
+        </div>
 
         <div class="btn-container">
             <a href="https://www.salford.gov.uk/housing/housing-advice-and-support/problems-with-your-property/make-a-complaint-about-a-rented-property/" target="_blank" class="btn">Report to Salford Council</a>
@@ -85,7 +85,7 @@
         <h2>📥 WHAT TO DO RIGHT NOW:</h2>
         <ul>
             <li>
-                <strong>Mark the Tracker:</strong> This will help us keep a digital record of the status of the lifts everyday. You can also use this page as further evidence of recorded outage in your report.<br>
+                <strong>Mark the Tracker:</strong><br>
                 <div id="trackerInteractionArea">
                     <div id="formView" class="tally-container">
                         <iframe src="https://tally.so/embed/81W6xx?hideTitle=1&transparentBackground=1&dynamicHeight=1" class="tally-iframe" title="Resident Impact Poll" data-tally-iframe></iframe>
@@ -103,8 +103,10 @@
             <li><strong>Message Your Landlord/Agent:</strong> Tell them the lifts have been dead for two weeks, it is a safety hazard in this heatwave, and demand they put maximum pressure on Hadrian. Ask them for a rent reduction.</li>
             <li><strong>Report to Salford Council:</strong> Click the button at the top of this page to go directly to the Salford Council reporting dashboard to log an official complaint.</li>
         </ul>
-        <hr style="border: 0; border-top: 1px solid #3a3a3c; margin: 25px 0;">
+
         <p style="text-align: center; color: #ff9500; font-weight: bold; margin-bottom: 20px;">Hadrian🤡 has been waiting on a quote for almost a week. Let’s make sure every single landlord in this building gets the message.</p>
+
+        <hr style="border: 0; border-top: 1px solid #3a3a3c; margin: 25px 0;">
 
     </div>
 
@@ -115,13 +117,12 @@
 
     <script async src="https://tally.so/widgets/embed.js"></script>
 
-<script>
+    <script>
 // 1. Paste your published Google Sheet CSV link here:
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSwIdJeNq7LzG1gYUaBcY1XuyHudzOW-6TK3tL9oWHpNlkAdUaBBeOUQ612RuM7twEkj0mQ-iIB3wjv/pub?gid=0&single=true&output=csv';
 
 const calendarGrid = document.getElementById('calendarGrid');
 const calendarHeader = document.getElementById('calendarHeader');
-const daysCounter = document.getElementById('daysCounter'); // Target the big counter
 const totalDaysTracked = 30; 
 
 // Array for the weekday column headers
@@ -135,48 +136,34 @@ async function loadCalendarFromSpreadsheet() {
         const response = await fetch(SHEET_CSV_URL);
         const csvText = await response.text();
         
+        // Split data into individual rows
         const rows = csvText.split('\n');
 
-        rows.forEach((row, index) => {
-            // 1. Skip header or empty rows
-            if (index === 0 || !row.trim()) return;
+        confirmedBrokenDays = rows.map((row, index) => {
+            // 1. Skip the first row completely (headers like "Submitted at")
+            if (index === 0) return null;
 
-            // 2. Safe CSV split that handles commas hidden inside text responses
-            const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
-            
-            const firstColumnData = columns[0] ? columns[0].replace(/"/g, '').trim() : '';
-            // 3. Grab Column E (Index 4) and force it to uppercase to safely check for TRUE
-            const fifthColumnData = columns[4] ? columns[4].replace(/"/g, '').trim().toUpperCase() : '';
+            const cellValue = row.trim();
+            if (!cellValue) return null;
 
-            // 4. If Column E contains TRUE (forgiving check for hidden spaces/returns)
-            if (fifthColumnData.includes('TRUE')) {
-                
-                // USING YOUR ORIGINAL DATE LOGIC (because it works!)
-                if (firstColumnData.includes('-') || firstColumnData.includes('/')) {
-                    const dateObj = new Date(firstColumnData);
-                    if (!isNaN(dateObj.getTime())) {
-                        confirmedBrokenDays.push(dateObj.getDate());
-                    }
-                } else {
-                    const parsedNum = parseInt(firstColumnData, 10);
-                    if (!isNaN(parsedNum)) {
-                        confirmedBrokenDays.push(parsedNum);
-                    }
-                }
+            // Get the text from Column A (split by commas in case it reads the whole row)
+            const firstColumnData = cellValue.split(',')[0].replace(/"/g, '').trim();
+
+            // 2. Check if the cell looks like a date (e.g., 2026-06-29 19:08:17)
+            if (firstColumnData.includes('-') || firstColumnData.includes('/')) {
+                const dateObj = new Date(firstColumnData);
+                // Extract just the day number (1-31) if it's valid
+                return !isNaN(dateObj.getTime()) ? dateObj.getDate() : null;
+            } else {
+                // If it's already a raw number string, parse it directly
+                const parsedNum = parseInt(firstColumnData, 10);
+                return !isNaN(parsedNum) ? parsedNum : null;
             }
-        });
+        }).filter(num => num !== null && !isNaN(num));
 
     } catch (error) {
         console.warn("CORS block or sheet missing. Using local test array.");
-        confirmedBrokenDays = [22, 23, 24, 25]; // Fallback test
-    }
-
-    // 5. THE MAGIC BULLET: Deduplicate the calendar array and count it
-    const uniqueDays = new Set(confirmedBrokenDays);
-    const daysCounterElement = document.getElementById('daysCounter');
-    
-    if (daysCounterElement) {
-        daysCounterElement.innerText = uniqueDays.size; 
+        confirmedBrokenDays = [22, 23, 24, 25]; // Your local fallback test
     }
 
     // Set the dynamic Month and Year header
@@ -201,7 +188,7 @@ async function loadCalendarFromSpreadsheet() {
         daySquare.classList.add('calendar-day');
         daySquare.innerText = dayNumber;
         
-        // Light up the broken days
+        // If this day number matches any days found in your Tally sheet, light it up red!
         if (confirmedBrokenDays.includes(dayNumber)) {
             daySquare.classList.add('broken');
         }
@@ -224,15 +211,10 @@ window.addEventListener('message', (tallyMessage) => {
                 document.getElementById('calendarView').style.display = 'block';
             }
         }
-} catch (error) {
-        console.warn("Could not load Google Sheet. Check CORS or Publish status.", error);
-        confirmedBrokenDays = []; // Empty the fallback so it doesn't fake a count
-        if (daysCounterElement) {
-            daysCounterElement.innerText = "Error"; // Shows "Error" instead of 4
-            daysCounterElement.style.fontSize = "2rem"; // Shrink text so it fits
-        }
+    } catch (error) {
+        // Safe catch-all to ignore messages sent by other browser apps/extensions
     }
 });
-</script>
+    </script>
 </body>
 </html>
