@@ -54,10 +54,10 @@
         <div class="warning-header">⚠️ MILLENNIUM TOWER LIFT CRISIS: KNOW YOUR RIGHTS ⚠️</div>
         <h1>STAIRMASTER UNLOCKED</h1>
         
-        <div class="days-container">
-            <div class="days-label">Days Without a Working Lift</div>
-            <div class="days">10</div> 
-        </div>
+<div class="days-container">
+    <div class="days-label">Days Without a Working Lift</div>
+    <div class="days" id="daysCounter">0</div> 
+</div>
 
         <div class="btn-container">
             <a href="https://www.salford.gov.uk/housing/housing-advice-and-support/problems-with-your-property/make-a-complaint-about-a-rented-property/" target="_blank" class="btn">Report to Salford Council</a>
@@ -115,12 +115,13 @@
 
     <script async src="https://tally.so/widgets/embed.js"></script>
 
-    <script>
+<script>
 // 1. Paste your published Google Sheet CSV link here:
 const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSwIdJeNq7LzG1gYUaBcY1XuyHudzOW-6TK3tL9oWHpNlkAdUaBBeOUQ612RuM7twEkj0mQ-iIB3wjv/pub?gid=0&single=true&output=csv';
 
 const calendarGrid = document.getElementById('calendarGrid');
 const calendarHeader = document.getElementById('calendarHeader');
+const daysCounter = document.getElementById('daysCounter'); // Target the big counter
 const totalDaysTracked = 30; 
 
 // Array for the weekday column headers
@@ -129,6 +130,7 @@ const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 // This function fetches your spreadsheet data and builds the calendar
 async function loadCalendarFromSpreadsheet() {
     let confirmedBrokenDays = []; 
+    let uniqueBrokenDates = new Set(); // Use a Set to ensure we don't double-count the same day
 
     try {
         const response = await fetch(SHEET_CSV_URL);
@@ -137,31 +139,46 @@ async function loadCalendarFromSpreadsheet() {
         // Split data into individual rows
         const rows = csvText.split('\n');
 
-        confirmedBrokenDays = rows.map((row, index) => {
-            // 1. Skip the first row completely (headers like "Submitted at")
-            if (index === 0) return null;
+        rows.forEach((row, index) => {
+            // Skip the header row
+            if (index === 0) return;
 
-            const cellValue = row.trim();
-            if (!cellValue) return null;
+            // Regex to split CSV by commas, ignoring commas inside quotes
+            const columns = row.split(/,(?=(?:(?:[^"]*"){2})*[^"]*$)/);
+            
+            // Ensure the row actually has at least 5 columns (up to Column E)
+            if (columns.length < 5) return;
 
-            // Get the text from Column A (split by commas in case it reads the whole row)
-            const firstColumnData = cellValue.split(',')[0].replace(/"/g, '').trim();
+            // Column A is index 0 (Date), Column E is index 4 (Status)
+            const dateValue = columns[0] ? columns[0].replace(/"/g, '').trim() : '';
+            const statusValue = columns[4] ? columns[4].replace(/"/g, '').trim().toLowerCase() : '';
 
-            // 2. Check if the cell looks like a date (e.g., 2026-06-29 19:08:17)
-            if (firstColumnData.includes('-') || firstColumnData.includes('/')) {
-                const dateObj = new Date(firstColumnData);
-                // Extract just the day number (1-31) if it's valid
-                return !isNaN(dateObj.getTime()) ? dateObj.getDate() : null;
-            } else {
-                // If it's already a raw number string, parse it directly
-                const parsedNum = parseInt(firstColumnData, 10);
-                return !isNaN(parsedNum) ? parsedNum : null;
+            // Check if Column E contains 'true'
+            if (statusValue === 'true' && dateValue) {
+                const dateObj = new Date(dateValue);
+                
+                if (!isNaN(dateObj.getTime())) {
+                    // Extract full date string (e.g., "2026-06-29") to count unique days accurately
+                    const fullDateString = dateObj.toISOString().split('T')[0];
+                    uniqueBrokenDates.add(fullDateString);
+                    
+                    // Add just the day number to array for the calendar highlighting
+                    confirmedBrokenDays.push(dateObj.getDate());
+                }
             }
-        }).filter(num => num !== null && !isNaN(num));
+        });
+
+        // Update the big red counter dynamically!
+        if (daysCounter) {
+            daysCounter.innerText = uniqueBrokenDates.size;
+        }
 
     } catch (error) {
         console.warn("CORS block or sheet missing. Using local test array.");
         confirmedBrokenDays = [22, 23, 24, 25]; // Your local fallback test
+        if (daysCounter) {
+            daysCounter.innerText = confirmedBrokenDays.length; // Fallback count
+        }
     }
 
     // Set the dynamic Month and Year header
@@ -213,6 +230,6 @@ window.addEventListener('message', (tallyMessage) => {
         // Safe catch-all to ignore messages sent by other browser apps/extensions
     }
 });
-    </script>
+</script>
 </body>
 </html>
