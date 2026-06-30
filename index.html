@@ -224,8 +224,13 @@ window.addEventListener('message', (tallyMessage) => {
                 document.getElementById('calendarView').style.display = 'block';
             }
         }
-    } catch (error) {
-        // Safe catch-all to ignore messages sent by other browser apps/extensions
+} catch (error) {
+        console.warn("Could not load Google Sheet. Check CORS or Publish status.", error);
+        confirmedBrokenDays = []; // Empty the fallback so it doesn't fake a count
+        if (daysCounterElement) {
+            daysCounterElement.innerText = "Error"; // Shows "Error" instead of 4
+            daysCounterElement.style.fontSize = "2rem"; // Shrink text so it fits
+        }
     }
 });
 </script>
